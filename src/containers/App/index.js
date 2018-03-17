@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 // Instruments
 import Styles from './styles';
 import moment from 'moment';
-
+import Composer from '../../components/Composer';
+import Post from '../../components/Post';
 
 export default class App extends Component {
 
@@ -15,6 +16,8 @@ export default class App extends Component {
             <section className = { Styles.app }>
                 <h1>Welcome!</h1>
                 <p>It is {moment().format('MMMM D h:mm:ss a')}.</p>
+                <Composer />
+                <Post />
             </section>
         );
     }
