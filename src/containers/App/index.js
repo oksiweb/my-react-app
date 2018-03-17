@@ -9,8 +9,6 @@ import Post from '../../components/Post';
 
 export default class App extends Component {
 
-    timer = setInterval(() => this.forceUpdate(), 1000);
-
     render () {
         return (
             <section className = { Styles.app }>

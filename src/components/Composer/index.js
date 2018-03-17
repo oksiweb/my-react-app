@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+import Styles from './styles.scss';
+
+console.log(Styles)
 
 import avatar from '../../theme/assets/lisa.png';
 
 export default class Composer extends Component {
   render(){
      return (
-         <section>
+         <section className = {Styles.composer} >
            <img alt="lisa"
                 src={ avatar }
            />
