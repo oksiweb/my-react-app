@@ -8,6 +8,12 @@ import { getUniqueID } from '../../helpers';
 import Catcher from '../Catcher';
 
 export default class Feed extends Component {
+
+    static contextTypes = {
+        api: string.isRequired,
+        token: string.isRequired
+    }
+
     static propTypes = {
         avatar: string.isRequired,
         firstName: string.isRequired,
@@ -18,16 +24,53 @@ export default class Feed extends Component {
         posts: []
     };
 
-    _createPost = (c) => {
-        this.setState(({ posts }) => ({
-            posts: [
-                {
-                    id: getUniqueID(),
-                    comment: c
-                },
-                ...posts
-            ]
-        }));
+    getData = () => {
+        const { api} = this.context;
+        fetch(api, {
+            method:  'GET'
+        }).then((response) => {
+            if (response.status !== 200){
+                throw new Error();
+            }
+
+            return response.json();
+        }).then(({ data }) => {
+            this.setState(({ posts }) => ({
+                posts: [
+                    ...data,
+                    ...posts
+                ]
+            }));
+        }).catch(e => console.error(e.message));
+    }
+
+    componentDidMount(){
+        this.getData();
+    }
+
+    _createPost = (comment) => {
+        const { api, token } = this.context;
+        fetch(api, {
+            method:  'POST',
+            headers: {
+                'Content-Type':  'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({comment})
+        }).then((response) => {
+            if (response.status !== 200){
+                throw new Error();
+            }
+
+            return response.json();
+        }).then(({ data }) => {
+            this.setState(({ posts }) => ({
+                posts: [
+                    ...data,
+                    ...posts
+                ]
+            }));
+        }).catch(e => console.error(e.message));
     };
 
     _deletePost = (id) => {
@@ -36,28 +79,12 @@ export default class Feed extends Component {
         }));
     };
 
-    componentDidUpdate(){
-        console.log('------->componentDidUpdate');
-    }
-
-    componentWillUpdate(){
-        console.log('------->componentWillUpdate');
-    }
-
-    componentDidMount(){
-        console.log('------->componentDidMount');
-    }
-
-    componentWillMount(){
-        console.log('------->componentWillMount');
-    }
-
     render() {
         console.log('render');
         const { avatar, firstName, lastName } = this.props;
         const { posts: postData } = this.state;
 
-        const posts = postData.map(post => (
+        const postsList = postData.map(post => (
             <Catcher  key = {post.id}>
                 <Post
                     avatar = {avatar}
@@ -65,7 +92,8 @@ export default class Feed extends Component {
                     deletePost = {this._deletePost}
                     firstName = {post.firstName}
                     id = {post.id}
-                    lastName = {lastName}
+                    created = {post.created}
+                    lastName = {post.lastName}
                 />
             </Catcher>
         ));
@@ -77,7 +105,7 @@ export default class Feed extends Component {
                     firstName={firstName}
                     createPost={this._createPost}
                 />
-                    {posts}
+                    {postsList}
             </section>
         );
     }

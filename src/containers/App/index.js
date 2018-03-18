@@ -13,19 +13,23 @@ import avatar from '../../theme/assets/lisa.png';
 const options = {
     firstName: 'Oksana',
     lastName:  'Barylo',
-    avatar
+    avatar,
+    api:       'https://lab.lectrum.io/react/api/1fwfsc9M9A',
+    token:     '5b9jrxnzx4'
 };
 
 export default class App extends Component {
 
     static childContextTypes = {
-        firstName: string.isRequired
+        api: string.isRequired,
+        firstName: string.isRequired,
+        lastName: string.isRequired,
+        token: string.isRequired,
+        avatar: string.isRequired
     };
 
     getChildContext() {
-        return {
-            firstName: options.firstName
-        };
+        return options;
     }
 
     render () {

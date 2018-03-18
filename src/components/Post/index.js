@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { string, func } from 'prop-types';
+import { string, func, number } from 'prop-types';
 
 import moment from 'moment';
 import Styles from './styles.scss';
@@ -10,7 +10,8 @@ export default class Post extends Component {
         comment: string.isRequired,
         deletePost: func.isRequired,
         id: string.isRequired,
-        lastName: string.isRequired
+        lastName: string.isRequired,
+        created: number.isRequired
     };
 
     static contextTypes = {
@@ -33,15 +34,16 @@ export default class Post extends Component {
 
     render() {
         const { avatar,
+            firstName,
             lastName,
+            created,
             comment } = this.props;
-        const { firstName } = this.context;
 
         return (
             <section className={Styles.post}>
                 <img alt="post" src={avatar} />
                 <a>{`${firstName} ${lastName}`}</a>
-                <time>{moment().format("MMMM D h:mm:ss a")}</time>
+                <time>{moment.unix(created).format("MMMM D h:mm:ss a")}</time>
                 <p>{comment}</p>
                 <span onClick={this._deletePost} className={Styles.cross} />
             </section>

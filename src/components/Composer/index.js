@@ -1,7 +1,9 @@
-import React, { Component } from "react";
-import { string, func } from "prop-types";
+import React, { Component } from 'react';
+import { string, func } from 'prop-types';
 
-import Styles from "./styles.scss";
+import {getRandomColor} from '../../helpers'
+
+import Styles from './styles.scss';
 
 export default class Composer extends Component {
     static propTypes = {
@@ -15,7 +17,8 @@ export default class Composer extends Component {
     }
 
     state = {
-        comment: ""
+        comment: '',
+        avatarBorderColor: '#ff0000'
     };
 
     _handleSubmit(event) {
@@ -32,20 +35,33 @@ export default class Composer extends Component {
         }));
     };
 
+    _handleOnCopy(e){
+        e.preventDefault();
+    }
+
+    _handleKeyPress = (e) => {
+        this.setState(() => ({
+            avatarBorderColor: getRandomColor()
+        }));
+    };
+
     render() {
         const { avatar, firstName } = this.props;
-        const { comment } = this.state;
+        const { comment, avatarBorderColor } = this.state;
 
         return (
-            <section className={Styles.composer}>
-                <img alt="lisa" src={avatar} />
+            <section className={Styles.composer} style = { {borderColor: avatarBorderColor} }>
+                <img alt = 'lisa'
+                     src = {avatar} />
                 <form onSubmit={this.handleSubmit}>
                     <textarea
-                        value={comment}
-                        placeholder={`What do you think about, ${firstName}?`}
-                        onChange={this._handleTextAreaChange}
+                        value = {comment}
+                        placeholder = {`What do you think about, ${firstName}?`}
+                        onChange = {this._handleTextAreaChange}
+                        onCopy = {this._handleOnCopy}
+                        onKeyPress={this._handleKeyPress}
                     />
-                    <input type="submit" value="Post"  disabled={!comment} />
+                    <input type = 'submit' value = 'Post'  disabled={!comment} />
                 </form>
             </section>
         );
