@@ -1,22 +1,28 @@
 import React, { Component } from 'react';
+import { string } from 'prop-types'
+
 import Styles from './styles.scss';
 
-console.log(Styles)
-
-import avatar from '../../theme/assets/lisa.png';
-
 export default class Composer extends Component {
-  render(){
-     return (
-         <section className = {Styles.composer} >
-           <img alt="lisa"
-                src={ avatar }
-           />
-           <form>
-             <textarea placeholder={`What do you think about, Oksana?`} />
-             <input type="submit" value="Post"/>
-           </form>
-         </section>
-     )
-  }
+
+    static propTypes = {
+        avatar: string.isRequired
+    };
+
+    render() {
+        const { avatar, firstName } = this.props;
+
+        return (
+            <section className = {Styles.composer} >
+                <img
+                    alt = 'lisa'
+                    src = { avatar }
+                />
+                <form>
+                    <textarea placeholder = {`What do you think about, ${firstName}?`} />
+                    <input type = 'submit' value = 'Post' />
+                </form>
+            </section>
+        );
+    }
 }
