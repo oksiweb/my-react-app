@@ -1,12 +1,15 @@
-import React, { Component, Fragment } from "react";
-import { string } from "prop-types";
+import React, { Component, Fragment } from 'react';
+import { string, func } from 'prop-types';
 
-import moment from "moment";
-import Styles from "./styles.scss";
+import moment from 'moment';
+import Styles from './styles.scss';
 
 export default class Post extends Component {
     static propTypes = {
         avatar: string.isRequired,
+        comment: string.isRequired,
+        deletePost: func.isRequired,
+        id: string.isRequired,
         lastName: string.isRequired
     };
 
@@ -14,8 +17,24 @@ export default class Post extends Component {
         firstName: string.isRequired
     };
 
+    _deletePost = () => {
+        const {deletePost, id} = this.props;
+        deletePost(id)
+    }
+
+    componentWillUnmount() {
+        console.log('=======>componentWillUnmount');
+    }
+
+    shouldComponentUpdate() {
+        console.log('shouldComponentUpdate');
+        return false;
+    }
+
     render() {
-        const { avatar, lastName } = this.props;
+        const { avatar,
+            lastName,
+            comment } = this.props;
         const { firstName } = this.context;
 
         return (
@@ -23,8 +42,8 @@ export default class Post extends Component {
                 <img alt="post" src={avatar} />
                 <a>{`${firstName} ${lastName}`}</a>
                 <time>{moment().format("MMMM D h:mm:ss a")}</time>
-                <p>Пора на обед!</p>
-                <span className={Styles.cross} />
+                <p>{comment}</p>
+                <span onClick={this._deletePost} className={Styles.cross} />
             </section>
         );
     }
