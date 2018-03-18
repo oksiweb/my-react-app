@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { string } from 'prop-types';
+import io from 'socket.io-client';
 
 import Composer from '../../components/Composer';
 import Post from '../../components/Post';
@@ -45,6 +46,31 @@ export default class Feed extends Component {
     }
 
     componentDidMount(){
+        const socket = io('https://lab.lectrum.io/', {
+            path: '/react/ws'
+        });
+
+        socket.on('connect', () => {
+            console.log(`socket ${socket.id}`);
+        });
+
+        socket.on('disconnect', () => {
+            console.error(`socket disconect ${socket.id}`);
+        });
+
+        socket.emit('join', '1fwfsc9M9A');
+
+        socket.on('join_error', (message) => {
+            console.error(JSON.parse(message));
+        });
+
+        socket.on('create', (data) => {
+            const post = JSON.parse(data).data;
+            this.setState(({ posts }) => ({
+                posts: [ post, ...posts]
+            }));
+        })
+
         this.getData();
     }
 
@@ -63,14 +89,16 @@ export default class Feed extends Component {
             }
 
             return response.json();
-        }).then(({ data }) => {
-            this.setState(({ posts }) => ({
-                posts: [
-                    ...data,
-                    ...posts
-                ]
-            }));
-        }).catch(e => console.error(e.message));
+        })
+        // .then(({ data }) => {
+        // this.setState(({ posts }) => ({
+        //     posts: [
+        //         data,
+        //         ...posts
+        //     ]
+        // }));
+        // })
+        .catch(e => console.error(e.message));
     };
 
     _deletePost = (id) => {

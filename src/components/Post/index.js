@@ -44,7 +44,13 @@ export default class Post extends Component {
                 <img alt="post" src={avatar} />
                 <a>{`${firstName} ${lastName}`}</a>
                 <time>{moment.unix(created).format("MMMM D h:mm:ss a")}</time>
-                <p>{comment}</p>
+                <p>{
+                    comment.substring(0,4) === 'http' ?
+                        (<img src={comment} alt=""/>)
+                        : (
+                        <p>{comment}</p>
+                    )
+                }</p>
                 <span onClick={this._deletePost} className={Styles.cross} />
             </section>
         );
