@@ -6,12 +6,12 @@ import Styles from './styles.scss';
 
 export default class Post extends Component {
     static propTypes = {
-        avatar: string.isRequired,
-        comment: string.isRequired,
+        avatar:     string.isRequired,
+        comment:    string.isRequired,
+        created:    number.isRequired,
         deletePost: func.isRequired,
-        id: string.isRequired,
-        lastName: string.isRequired,
-        created: number.isRequired
+        id:         string.isRequired,
+        lastName:   string.isRequired
     };
 
     static contextTypes = {
@@ -19,39 +19,27 @@ export default class Post extends Component {
     };
 
     _deletePost = () => {
-        const {deletePost, id} = this.props;
-        deletePost(id)
-    }
+        const { deletePost, id } = this.props;
 
-    componentWillUnmount() {
-        console.log('=======>componentWillUnmount');
-    }
+        deletePost(id);
+    };
 
-    shouldComponentUpdate() {
-        console.log('shouldComponentUpdate');
-        return false;
-    }
-
-    render() {
-        const { avatar,
-            firstName,
-            lastName,
-            created,
-            comment } = this.props;
+    render () {
+        const { avatar, firstName, lastName, created, comment } = this.props;
 
         return (
-            <section className={Styles.post}>
-                <img alt="post" src={avatar} />
+            <section className = { Styles.post }>
+                <img alt = 'post' src = { avatar } />
                 <a>{`${firstName} ${lastName}`}</a>
-                <time>{moment.unix(created).format("MMMM D h:mm:ss a")}</time>
-                <p>{
-                    comment.substring(0,4) === 'http' ?
-                        (<img src={comment} alt=""/>)
-                        : (
-                        <p>{comment}</p>
-                    )
-                }</p>
-                <span onClick={this._deletePost} className={Styles.cross} />
+                <time>{moment.unix(created).format('MMMM D h:mm:ss a')}</time>
+                <p>
+                    {comment.substring(0, 4) === 'http' ? (
+                        <img src = { comment } alt = '' />
+                    ) : (
+                        <span>{comment}</span>
+                    )}
+                </p>
+                <span className = { Styles.cross } onClick = { this._deletePost } />
             </section>
         );
     }

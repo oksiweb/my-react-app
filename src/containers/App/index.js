@@ -19,16 +19,15 @@ const options = {
 };
 
 export default class App extends Component {
-
     static childContextTypes = {
-        api: string.isRequired,
+        api:       string.isRequired,
         firstName: string.isRequired,
-        lastName: string.isRequired,
-        token: string.isRequired,
-        avatar: string.isRequired
+        lastName:  string.isRequired,
+        token:     string.isRequired,
+        avatar:    string.isRequired
     };
 
-    getChildContext() {
+    getChildContext () {
         return options;
     }
 
