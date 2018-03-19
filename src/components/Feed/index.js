@@ -1,12 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import { string, number } from 'prop-types';
 import io from 'socket.io-client';
+import { CSSTransition, TransitionGroup, Transition } from 'react-transition-group';
+import { fromTo } from 'gsap';
 
 import Composer from '../../components/Composer';
 import Counter from '../../components/Counter';
 import Spinner from '../../components/Spinner';
 import Post from '../../components/Post';
+import Postman from '../../components/Postman';
+
 //import { getUniqueID } from '../../helpers';
+import Styles from './styles.scss';
 
 import Catcher from '../Catcher';
 
@@ -25,7 +30,8 @@ export default class Feed extends Component {
 
     state = {
         posts:      [],
-        isFetching: false
+        isFetching: false,
+        postman: true
     };
 
     componentDidMount () {
@@ -169,37 +175,138 @@ export default class Feed extends Component {
         }));
     };
 
+    // _handleComposerAppear = (composer) => {
+    //     fromTo(
+    //         composer,
+    //         1,
+    //         {
+    //             y:         -200,
+    //             x:         500,
+    //             opacity:   0,
+    //             rotationY: 360
+    //         },
+    //         {
+    //             y:         0,
+    //             x:         0,
+    //             opacity:   1,
+    //             rotationY: 0
+    //         }
+    //     );
+    // }
+
+    // _handleCounterAppear = (counter) => {
+    //     fromTo(
+    //         counter,
+    //         1,
+    //         {
+    //             x:         -1000,
+    //             y:         -300,
+    //             opacity:   0,
+    //             rotationY: 360
+    //         },
+    //         {
+    //             y:         0,
+    //             x:         0,
+    //             opacity:   1,
+    //             rotationY: 0
+    //         }
+    //     );
+    // }
+
+    _handlePostmanAppear = (postman) => {
+        fromTo(
+            postman, //анимируемый елемент
+            2, // длительность анимации
+            {
+                x:       500,
+                opacity: 0
+            },
+            {
+                x:       0,
+                opacity: 1,
+                onComplete: () => {
+                    setTimeout(() => {
+                        this.setState({
+                            postman: false
+                        })
+                    }, 1000)
+                }
+            }
+        );
+    }
+
+    _handlePostmanDisappear = (postman) => {
+        fromTo(
+            postman,
+            2,
+            {
+                x:       0,
+                opacity: 1
+            },
+            {
+                x:       500,
+                opacity: 0
+            },
+            {
+                x: 0,
+                opacity: 1,
+            }
+        );
+    }
+
     render () {
         console.log('render');
         const { avatar, firstName, lastName } = this.props;
-        const { posts: postData, isFetching } = this.state;
+        const { posts: postData, isFetching, postman } = this.state;
         const count = postData.length;
 
         const postsList = postData.map((post) => (
-            <Catcher key = { post.id }>
-                <Post
-                    avatar = { avatar }
-                    comment = { post.comment }
-                    deletePost = { this._deletePost }
-                    firstName = { post.firstName }
-                    id = { post.id }
-                    created = { post.created }
-                    lastName = { post.lastName }
-                />
-            </Catcher>
+            <CSSTransition
+                //classNames
+                classNames = { {
+                    enter:       Styles.postInStart,
+                    enterActive: Styles.postInEnd,
+                    exit:        Styles.postEndStart,
+                    exitActive:  Styles.postEnd
+                } }
+                key = { post.id }
+                timeout = { 700 }>
+                <Catcher>
+                    <Post
+                        avatar = { avatar }
+                        comment = { post.comment }
+                        deletePost = { this._deletePost }
+                        firstName = { post.firstName }
+                        id = { post.id }
+                        created = { post.created }
+                        lastName = { post.lastName }
+                    />
+                </Catcher>
+            </CSSTransition>
         ));
 
         return (
-            <Fragment>
+            <section className={Styles.feed}>
                 <Spinner isFetching = { isFetching } />
+                <Transition
+                    appear // анимация первоначальное появления
+                    in = {postman} // переключатель для onEnter and onExit
+                    onEnter = {this._handlePostmanAppear}
+                    onExit = {this._handlePostmanDisappear}
+                    timeout={ 2000 }>
+                    <Postman/>
+                </Transition>
                 <Composer
                     avatar = { avatar }
                     createPost = { this._createPost }
                     firstName = { firstName }
                 />
                 <Counter count = { count } />
-                {postsList}
-            </Fragment>
+                <TransitionGroup>
+                    {postsList}
+                </TransitionGroup>
+
+            </section>
         );
     }
 }

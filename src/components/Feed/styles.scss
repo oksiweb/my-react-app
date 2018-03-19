@@ -1,0 +1,34 @@
+@import '../../theme/palette';
+@import '../../theme/animations';
+
+.feed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 10vw;
+    min-height: 200vh;
+    padding: 15px;
+    background-color: $paletteColor3;
+
+    .postInStart {
+        transform: scale(.5);
+        opacity: .01;
+    }
+
+    .postInEnd {
+        transform: scale(1);
+        transition: opacity 700ms $cubic1,
+            transform 700ms $cubic1;
+        opacity: 1;
+    }
+
+    .postEndStart {
+        opacity: 1;
+    }
+
+    .postEnd {
+        transition: opacity 700ms $cubic1,
+        transform 700ms $cubic1;
+        opacity: 0.01;
+    }
+}
