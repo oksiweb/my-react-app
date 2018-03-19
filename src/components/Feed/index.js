@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { string, number } from 'prop-types';
 import io from 'socket.io-client';
 
@@ -48,10 +48,17 @@ export default class Feed extends Component {
         });
 
         socket.on('create', (data) => {
-            const post = JSON.parse(data).data;
+            const post = JSON.parse(data);
 
             this.setState(({ posts }) => ({
                 posts: [post, ...posts]
+            }));
+        });
+
+        socket.on('remove', (postId) => {
+            this.setState(({ posts }) => ({
+                posts:      posts.filter((post) => postId !== post.id),
+                isFetching: false
             }));
         });
 
@@ -70,31 +77,50 @@ export default class Feed extends Component {
         });
     };
 
-    getData = () => {
+    getData = async () => {
         const { api } = this.context;
 
-        this._startFetch();
-
-        fetch(api, {
-            method: 'GET'
-        })
-            .then((response) => {
-                if (response.status !== 200) {
-                    throw new Error();
-                }
-
-                return response.json();
-            })
-            .then(({ data }) => {
-                this.setState(() => ({
-                    posts: data
-                }));
-                this._stopFetch();
-            })
-            .catch((e) => {
-                this._stopFetch();
-                console.error(e.message);
+        try {
+            this._startFetch();
+            const response = await fetch(api, {
+                method: 'GET'
             });
+
+            if (response.status !== 200) {
+                throw new Error();
+            }
+            const { data } = await response.json();
+
+            this.setState(() => ({
+                posts:      data,
+                isFetching: false
+            }));
+        } catch (e) {
+            console.error(message);
+            this._stopFetch();
+        }
+
+        // fetch(api, {
+        //     method: 'GET'
+        // })
+        //     .then((response) => {
+        //         if (response.status !== 200) {
+        //             throw new Error();
+        //         }
+        //
+        //         return response.json();
+        //     })
+        //     .then(({ data }) => {
+        //         this.setState(() => ({
+        //             posts:      data,
+        //             isFetching: false
+        //         }));
+        //         this._stopFetch();
+        //     })
+        //     .catch((e) => {
+        //         this._stopFetch();
+        //         console.error(e.message);
+        //     });
     };
 
     _createPost = (comment) => {
@@ -118,7 +144,26 @@ export default class Feed extends Component {
             .catch((e) => console.error(e.message));
     };
 
-    _deletePost = (id) => {
+    _deletePost = async (id) => {
+        try {
+            this._startFetch();
+            const { api, token } = this.context;
+
+            const response = await fetch(`${api}/${id}`, {
+                method:  'DELETE',
+                headers: {
+                    Authorization: token
+                }
+            });
+
+            if (response.status !== 204) {
+                throw new Error();
+            }
+        } catch ({ message }) {
+            this._stopFetch();
+            console.error(message);
+        }
+
         this.setState(({ posts }) => ({
             posts: posts.filter((post) => post.id !== id)
         }));
@@ -145,7 +190,7 @@ export default class Feed extends Component {
         ));
 
         return (
-            <section>
+            <Fragment>
                 <Spinner isFetching = { isFetching } />
                 <Composer
                     avatar = { avatar }
@@ -154,7 +199,7 @@ export default class Feed extends Component {
                 />
                 <Counter count = { count } />
                 {postsList}
-            </section>
+            </Fragment>
         );
     }
 }

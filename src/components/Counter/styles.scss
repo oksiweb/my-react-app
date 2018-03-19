@@ -1,7 +1,18 @@
 @import '../../theme/palette';
 
-
 .counter {
-    text-align: center;
+    position: relative;
+    color: $paletteColor7;
 
+    &::after {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: -35px;
+        width: 30px;
+        height: 30px;
+        background-image: url('../../theme/assets/post.png');
+        background-repeat: no-repeat;
+        background-size: 30px;
+    }
 }
