@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { string, func, number } from 'prop-types';
 
+import Like from '../../components/Like';
+
 import moment from 'moment';
 import Styles from './styles.scss';
 
@@ -25,7 +27,7 @@ export default class Post extends Component {
     };
 
     render () {
-        const { avatar, firstName, lastName, created, comment } = this.props;
+        const { avatar, firstName, lastName, created, comment, id, likes, likePost } = this.props;
 
         return (
             <section className = { Styles.post }>
@@ -40,6 +42,7 @@ export default class Post extends Component {
                     )}
                 </p>
                 <span className = { Styles.cross } onClick = { this._deletePost } />
+                <Like id = { id } likes = { likes } likePost = { likePost } />
             </section>
         );
     }

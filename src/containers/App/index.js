@@ -11,8 +11,8 @@ import Catcher from '../../components/Catcher';
 import avatar from '../../theme/assets/lisa.png';
 
 const options = {
-    firstName: 'Oksana',
-    lastName:  'Barylo',
+    firstName: 'Барило',
+    lastName:  'Оксана',
     avatar,
     api:       'https://lab.lectrum.io/react/api/1fwfsc9M9A',
     token:     '5b9jrxnzx4'
@@ -23,6 +23,7 @@ export default class App extends Component {
         api:       string.isRequired,
         firstName: string.isRequired,
         lastName:  string.isRequired,
+        avatar:    string.isRequired,
         token:     string.isRequired,
         avatar:    string.isRequired
     };
